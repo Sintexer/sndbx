@@ -1,4 +1,4 @@
-package id.sndbx.hibernate.inheritance.classToTable;
+package id.sndbx.hibernate.inheritance;
 
 
 import ib.sndbx.hibernate.inheritance.classToTable.Account;
@@ -17,9 +17,9 @@ import javax.persistence.PersistenceContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnableAutoConfiguration
-@ContextConfiguration(classes = ClassToTableInheritanceTest.Config.class)
+@ContextConfiguration(classes = ClassToTableTest.Config.class)
 @DataJpaTest
-public class ClassToTableInheritanceTest {
+public class ClassToTableTest {
 
     @EntityScan(basePackages = "ib.sndbx.hibernate.inheritance.classToTable")
     @Configuration
@@ -41,8 +41,6 @@ public class ClassToTableInheritanceTest {
 
         manager.flush();
         manager.clear(); // clear 1st layer cache to perform select
-
-        assertNotNull(manager);
 
         AdminAccount adminAccount = manager.find(AdminAccount.class, admin.getId());
         assertEquals(admin.getPrivilegeType(), adminAccount.getPrivilegeType());
