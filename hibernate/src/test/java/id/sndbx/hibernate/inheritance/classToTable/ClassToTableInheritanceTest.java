@@ -2,47 +2,55 @@ package id.sndbx.hibernate.inheritance.classToTable;
 
 
 import ib.sndbx.hibernate.inheritance.classToTable.Account;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Order;
+import ib.sndbx.hibernate.inheritance.classToTable.AdminAccount;
+import ib.sndbx.hibernate.inheritance.classToTable.UserAccount;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnableAutoConfiguration
-@ContextConfiguration(classes = ClassToTableConfig.class)
+@ContextConfiguration(classes = ClassToTableInheritanceTest.Config.class)
 @DataJpaTest
 public class ClassToTableInheritanceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ClassToTableInheritanceTest.class);
+    @EntityScan(basePackages = "ib.sndbx.hibernate.inheritance.classToTable")
+    @Configuration
+    static class Config {
+    }
 
     @PersistenceContext
     EntityManager manager;
 
     @Test
     void persistTest() {
-        Account firstAccount = new Account("Alice");
-        Account secondAccount = new Account("Pavel");
-        manager.persist(firstAccount);
-        manager.persist(secondAccount);
+        AdminAccount admin = new AdminAccount("Dot", 2L);
+        manager.persist(admin);
+        UserAccount user = new UserAccount("Don", "Simon");
+        manager.persist(user);
 
-        log.info("first: {}", firstAccount.getId());
-        log.info("first: {}", secondAccount.getId());
+        assertTrue(admin.getId() != 0L);
+        assertTrue(user.getId() != 0L);
 
-        Account found1Account = manager.find(Account.class, firstAccount.getId());
-        Account found2Account = manager.find(Account.class, secondAccount.getId());
-        log.info("1 Account name: {}", found1Account.getName());
-        log.info("2 Account name: {}", found2Account.getName());
+        manager.flush();
+        manager.clear(); // clear 1st layer cache to perform select
 
-        assertNotEquals(found1Account.getName(), found2Account.getName());
+        assertNotNull(manager);
+
+        AdminAccount adminAccount = manager.find(AdminAccount.class, admin.getId());
+        assertEquals(admin.getPrivilegeType(), adminAccount.getPrivilegeType());
+        UserAccount userAccount = manager.find(UserAccount.class, user.getId());
+        assertEquals(user.getSurname(), userAccount.getSurname());
+
+        // No table for account class
+        assertThrows(IllegalArgumentException.class, () -> manager.find(Account.class, 1L));
     }
 
 }

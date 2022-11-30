@@ -1,19 +1,18 @@
 package ib.sndbx.hibernate.inheritance.classToTable;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
-public class Account {
+@MappedSuperclass
+public abstract class Account {
 
     @Id
     @GeneratedValue
