@@ -1,9 +1,9 @@
 package id.sndbx.hibernate.inheritance;
 
 
-import ib.sndbx.hibernate.inheritance.classToTableWithJoin.Account;
-import ib.sndbx.hibernate.inheritance.classToTableWithJoin.AdminAccount;
-import ib.sndbx.hibernate.inheritance.classToTableWithJoin.UserAccount;
+import ib.sndbx.hibernate.inheritance.singleClass.Account;
+import ib.sndbx.hibernate.inheritance.singleClass.AdminAccount;
+import ib.sndbx.hibernate.inheritance.singleClass.UserAccount;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -17,11 +17,11 @@ import javax.persistence.PersistenceContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnableAutoConfiguration
-@ContextConfiguration(classes = ClassToTableWithJoinTest.Config.class)
+@ContextConfiguration(classes = SingleClassTest.Config.class)
 @DataJpaTest
-public class ClassToTableWithJoinTest {
+public class SingleClassTest {
 
-    @EntityScan(basePackages = "ib.sndbx.hibernate.inheritance.classToTableWithJoin")
+    @EntityScan(basePackages = "ib.sndbx.hibernate.inheritance.singleClass")
     @Configuration
     static class Config {
     }
@@ -31,9 +31,9 @@ public class ClassToTableWithJoinTest {
 
     @Test
     void persistTest() {
-        AdminAccount admin = new AdminAccount("Dot", 2L);
+        Account admin = new AdminAccount("Dot", 2L);
         manager.persist(admin);
-        UserAccount user = new UserAccount("Don", "Simon");
+        Account user = new UserAccount("Don", "Simon");
         manager.persist(user);
 
         assertTrue(admin.getId() != 0L);
@@ -45,9 +45,9 @@ public class ClassToTableWithJoinTest {
         assertNotNull(manager);
 
         AdminAccount adminAccount = manager.find(AdminAccount.class, admin.getId());
-        assertEquals(admin.getPrivilegeType(), adminAccount.getPrivilegeType());
+        assertNotEquals(adminAccount.getPrivilegeType(), 0);
         UserAccount userAccount = manager.find(UserAccount.class, user.getId());
-        assertEquals(user.getSurname(), userAccount.getSurname());
+        assertNotEquals(userAccount.getSurname(), "");
 
         // Can query for abstract type
         assertDoesNotThrow(() -> manager.find(Account.class, 1L));
