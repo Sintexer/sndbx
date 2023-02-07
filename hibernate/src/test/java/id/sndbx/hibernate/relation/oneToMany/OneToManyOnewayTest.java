@@ -1,6 +1,7 @@
 package id.sndbx.hibernate.relation.oneToMany;
 
 import ib.sndbx.hibernate.relation.oneToMany.oneway.Bag;
+import ib.sndbx.hibernate.relation.oneToMany.oneway.BagPersist;
 import ib.sndbx.hibernate.relation.oneToMany.oneway.Item;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -30,12 +31,28 @@ public class OneToManyOnewayTest {
         Bag bag = new Bag();
         Item a = new Item(null, "a");
         bag.getItems().add(a);
-        manager.persist(a);
+        manager.persist(a); // hibernate can't update collection with un-persisted elements
+        manager.persist(bag);
+        manager.flush();
+
+        // add without persist doesn't work
+//        bag.getItems().add(new Item(null, "b")); // add without saving
+//        manager.merge(bag);
+//        manager.flush();
+    }
+
+    @Test
+    void easyAddCascadeTest() {
+        BagPersist bag = new BagPersist();
+        Item a = new Item(null, "a");
+        bag.getItems().add(a);
+        //manager.persist(a); // hibernate can update collection with un-persisted elements
         manager.persist(bag);
         manager.flush();
 
         bag.getItems().add(new Item(null, "b")); // add without saving
         manager.merge(bag);
+        manager.flush();
     }
 
 }
