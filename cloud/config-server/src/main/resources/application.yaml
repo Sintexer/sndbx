@@ -10,8 +10,6 @@ spring:
           default-label: master
           search-paths:
             - "{application}"
-random:
-  env: 1
 
 management:
   endpoints:
