@@ -4,4 +4,5 @@ include(":hibernate")
 include 'cloud'
 include 'cloud:config-server'
 findProject(':cloud:config-server')?.name = 'config-server'
+include 'leetcode'
 
