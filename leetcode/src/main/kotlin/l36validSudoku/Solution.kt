@@ -33,3 +33,36 @@ class Solution {
         return true
     }
 }
+
+class AnotherSolution {
+    fun isValidSudoku(board: Array<CharArray>): Boolean {
+        val rows = Array(9) { BooleanArray(10) }
+        val cols = Array(9) { BooleanArray(10) }
+        val boxes = Array(9) { BooleanArray(10) }
+
+        for (i in board.indices) {
+            val row = board[i]
+            for (j in row.indices) {
+                val char = row[j]
+                if (isEmpty(char)) continue
+                val box = getBoxIndex(i, j)
+                val digit = char - '0'
+                if (rows[i][digit] || cols[j][digit] || boxes[box][digit]) {
+                    return false
+                }
+                rows[i][digit] = true
+                cols[j][digit] = true
+                boxes[box][digit] = true
+            }
+        }
+        return true
+    }
+
+    private fun isEmpty(char: Char): Boolean = char == EMPTY_CELL
+
+    fun getBoxIndex(i: Int, j: Int) = (i / 3) * 3 + (j / 3)
+
+    companion object {
+        private const val EMPTY_CELL = '.'
+    }
+}

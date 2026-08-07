@@ -38,3 +38,27 @@ class Solution {
         return maxArea
     }
 }
+
+
+class FasterSolution {
+    fun maxArea(heights: IntArray): Int {
+        var left = 0
+        var right = heights.size - 1
+        var maxArea = 0
+
+        while (left < right) {
+            val currentMin = minOf(heights[left], heights[right])
+            val area = currentMin * (right - left)
+            maxArea = maxOf(maxArea, area)
+            // Skip any bar on the left that is <= the limiting height
+            while (left < right && heights[left] <= currentMin) {
+                left++
+            }
+            // Skip any bar on the right that is <= the limiting height
+            while (left < right && heights[right] <= currentMin) {
+                right--
+            }
+        }
+        return maxArea
+    }
+}

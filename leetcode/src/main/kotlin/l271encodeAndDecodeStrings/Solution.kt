@@ -30,3 +30,38 @@ class Solution {
         private const val REPLACED = "~||"
     }
 }
+
+
+class BetterSolution {
+
+    companion object {
+        const val DELIM = '#'
+    }
+
+    fun encode(strs: List<String>): String {
+        return strs.map(this::encode).joinToString("")
+    }
+
+    fun encode(str: String): String = "" + str.length + DELIM + str
+
+    fun decode(str: String): List<String> {
+        val result = mutableListOf<String>()
+
+        var index = 0
+        val builder = StringBuilder()
+        while (index < str.length) {
+            val numberStart = index
+            while (str[index] != DELIM) ++index
+            val length = str.substring(numberStart, index).toInt()
+            ++index
+            builder.clear()
+            if (length > 0) {
+                val stringStart = index
+                index += length
+                builder.append(str, stringStart, index)
+            }
+            result.add(builder.toString())
+        }
+        return result
+    }
+}

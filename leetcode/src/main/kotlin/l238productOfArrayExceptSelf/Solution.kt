@@ -20,3 +20,18 @@ class Solution {
         return answer
     }
 }
+
+class SimplerSolution {
+    fun productExceptSelf(nums: IntArray): IntArray {
+        val answer = IntArray(nums.size) { 1 }
+        for (i in 0 until nums.size - 1) {
+            answer[i + 1] = answer[i] * nums[i]
+        }
+        var multi = 1
+        for (i in nums.size - 1 downTo 0) {
+            answer[i] *= multi
+            multi *= nums[i]
+        }
+        return answer
+    }
+}
